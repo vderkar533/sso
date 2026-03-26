@@ -1,0 +1,236 @@
+@page "/auth/login"
+@model SSO.Server.Pages.Auth.LoginModel
+
+<h2>Login</h2>
+
+<style>
+    .password-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .password-field input {
+        padding-right: 44px;
+        width: 100%;
+    }
+    .toggle-visibility {
+        position: absolute;
+        right: 8px;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        padding: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ink);
+        opacity: 0.7;
+    }
+    .toggle-visibility:hover { opacity: 1; }
+    .toggle-visibility svg { width: 18px; height: 18px; }
+</style>
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert">@Model.Message</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="error">@Model.Error</div>
+}
+
+@if (!Model.ShowEditForm)
+{
+    <form method="post" asp-page-handler="Login">
+        <label>Email</label>
+        <input type="email" asp-for="Email" required />
+
+        <label>Password</label>
+        <div class="password-field">
+            <input id="loginPassword" type="password" asp-for="Password" required />
+            <button type="button" class="toggle-visibility" data-target="loginPassword" aria-label="Show password" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p class="muted">
+        <a href="/auth/forgot-password">Forgot password?</a>
+    </p>
+}
+
+@if (Model.ShowEditForm)
+{
+    <style>
+        .tab-bar { display: flex; gap: 10px; margin: 12px 0 18px; flex-wrap: wrap; }
+        .tab-btn {
+            border: 1px solid var(--line);
+            background: var(--surface-muted);
+            color: var(--ink);
+            padding: 8px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .tab-btn.is-active {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.28);
+        }
+        .tab-panel { display: none; }
+        .tab-panel.is-active { display: block; }
+    </style>
+
+    <div class="tab-bar" role="tablist" aria-label="Profile Tabs">
+        <button class="tab-btn" type="button" data-tab="edit">Edit Registration Details</button>
+        <button class="tab-btn" type="button" data-tab="reset">Change Password</button>
+    </div>
+
+    <section class="tab-panel" data-tab="edit" role="tabpanel">
+        <h3>Edit Profile</h3>
+        <form method="post" asp-page-handler="Save">
+            <input type="hidden" asp-for="Edit.UserId" />
+            <input type="hidden" asp-for="RefreshToken" />
+            <input type="hidden" asp-for="ActiveTab" />
+
+            <label>Employee ID</label>
+            <input type="text" asp-for="Edit.EmployeeId" readonly />
+            <span class="muted" asp-validation-for="Edit.EmployeeId"></span>
+
+            <label>Name</label>
+            <input type="text" asp-for="Edit.Name" required />
+            <span class="muted" asp-validation-for="Edit.Name"></span>
+
+            <label>Email</label>
+            <input type="email" asp-for="Edit.Email" readonly />
+
+            <label>Department</label>
+            <select asp-for="Edit.DepartmentId" asp-items="Model.DepartmentOptions" required>
+                <option value="">Select department</option>
+            </select>
+            <span class="muted" asp-validation-for="Edit.DepartmentId"></span>
+
+            <label>Grade</label>
+            <select asp-for="Edit.GradeId" asp-items="Model.GradeOptions" required>
+                <option value="">Select grade</option>
+            </select>
+            <span class="muted" asp-validation-for="Edit.GradeId"></span>
+
+            <label>Mobile Number</label>
+            <input type="text" asp-for="Edit.MobileNumber" required />
+            <span class="muted" asp-validation-for="Edit.MobileNumber"></span>
+
+            <label>Aadhar Number</label>
+            <input type="text" asp-for="Edit.AadharNumber" required />
+            <span class="muted" asp-validation-for="Edit.AadharNumber"></span>
+
+            <label>User Type</label>
+            <select asp-for="Edit.UserType" id="editUserTypeSelect">
+                <option value="">Select user type</option>
+                <option value="1">Employee</option>
+                <option value="2">Contractor</option>
+            </select>
+            <span class="muted" asp-validation-for="Edit.UserType"></span>
+
+            <div id="editAgencyField">
+                <label>Contractor Agency Name</label>
+                <input type="text" asp-for="Edit.ContractorAgencyName" />
+                <span class="muted" asp-validation-for="Edit.ContractorAgencyName"></span>
+            </div>
+
+            <button type="submit">Save</button>
+        </form>
+    </section>
+
+    <section class="tab-panel" data-tab="reset" role="tabpanel">
+        <h3>Change Password</h3>
+        <form method="post" asp-page-handler="ResetPassword">
+            <input type="hidden" asp-for="ActiveTab" />
+
+            <label>Email</label>
+            <input type="email" asp-for="Reset.Email" readonly />
+            <span class="muted" asp-validation-for="Reset.Email"></span>
+
+            <label>Current Password</label>
+            <input type="password" asp-for="Reset.CurrentPassword" required />
+            <span class="muted" asp-validation-for="Reset.CurrentPassword"></span>
+
+            <label>New Password</label>
+            <input type="password" asp-for="Reset.NewPassword" required />
+            <span class="muted" asp-validation-for="Reset.NewPassword"></span>
+
+            <button type="submit">Change Password</button>
+        </form>
+    </section>
+
+    <form method="post" asp-page-handler="Logout">
+        <input type="hidden" asp-for="RefreshToken" />
+        <button type="submit">Logout</button>
+    </form>
+}
+
+<script>
+    (function () {
+        var select = document.getElementById("editUserTypeSelect");
+        var agency = document.getElementById("editAgencyField");
+        if (!select || !agency) return;
+
+        function toggleAgency() {
+            agency.style.display = select.value === "2" ? "block" : "none";
+        }
+
+        select.addEventListener("change", toggleAgency);
+        toggleAgency();
+    })();
+
+    (function () {
+        var buttons = Array.prototype.slice.call(document.querySelectorAll(".tab-btn"));
+        var panels = Array.prototype.slice.call(document.querySelectorAll(".tab-panel"));
+        if (buttons.length === 0 || panels.length === 0) return;
+
+        var active = "@(string.IsNullOrWhiteSpace(Model.ActiveTab) ? "edit" : Model.ActiveTab)";
+        var input = document.querySelector("input[name='ActiveTab']");
+
+        function setActive(tab) {
+            buttons.forEach(function (btn) {
+                btn.classList.toggle("is-active", btn.getAttribute("data-tab") === tab);
+            });
+            panels.forEach(function (panel) {
+                panel.classList.toggle("is-active", panel.getAttribute("data-tab") === tab);
+            });
+            if (input) input.value = tab;
+        }
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                setActive(btn.getAttribute("data-tab"));
+            });
+        });
+
+        setActive(active);
+    })();
+
+    (function () {
+        var toggles = Array.prototype.slice.call(document.querySelectorAll(".toggle-visibility"));
+        if (toggles.length === 0) return;
+
+        toggles.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var targetId = btn.getAttribute("data-target");
+                var input = targetId ? document.getElementById(targetId) : null;
+                if (!input) return;
+                var showing = input.type === "text";
+                input.type = showing ? "password" : "text";
+                btn.setAttribute("aria-pressed", (!showing).toString());
+                btn.setAttribute("aria-label", (!showing) ? "Hide password" : "Show password");
+            });
+        });
+    })();
+</script>

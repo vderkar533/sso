@@ -1,0 +1,17 @@
+# Dotnet build artifacts
+**/bin/
+**/obj/
+
+# Local dotnet SDK cache
+/dotnet_backend/.dotnet/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS junk
+.DS_Store
+Thumbs.db

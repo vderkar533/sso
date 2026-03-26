@@ -1,0 +1,31 @@
+@page "/auth/verify-email"
+@model SSO.Server.Pages.Auth.VerifyEmailModel
+
+<h2>Verify Email</h2>
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert">@Model.Message</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="error">@Model.Error</div>
+}
+
+@if (string.IsNullOrWhiteSpace(Model.Token))
+{
+    <form method="get">
+        <label>Email</label>
+        <input type="email" asp-for="Email" required />
+
+        <label>Token</label>
+        <input type="text" asp-for="Token" required />
+
+        <button type="submit">Verify Email</button>
+    </form>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Email))
+{
+    <p><a href="/auth/register?email=@Model.Email">Continue to registration</a></p>
+}

@@ -1,0 +1,105 @@
+@page "/auth/register"
+@model SSO.Server.Pages.Auth.RegisterModel
+
+<h2>Register</h2>
+<p class="muted">Complete registration. We will send a verification email.</p>
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert">@Model.Message</div>
+    @if (Model.RegistrationCompleted)
+    {
+        <p><a class="cta" href="/">Go to Home</a></p>
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="error">@Model.Error</div>
+}
+@if (string.IsNullOrWhiteSpace(Model.Error) && Model.ShowRegisterValidation && !ViewData.ModelState.IsValid)
+{
+    <div class="error" asp-validation-summary="All"></div>
+}
+
+
+@if (!Model.RegistrationCompleted)
+{
+    <form method="post" asp-page-handler="Register">
+        <label>Employee ID</label>
+        <input type="text" asp-for="Input.EmployeeId" required />
+        <span class="muted" asp-validation-for="Input.EmployeeId"></span>
+
+    <label>Name</label>
+    <input type="text" asp-for="Input.Name" required />
+    <span class="muted" asp-validation-for="Input.Name"></span>
+
+    <label>Email</label>
+    <input type="email" asp-for="Input.Email" required />
+    <span class="muted" asp-validation-for="Input.Email"></span>
+
+    @if (Model.RequirePassword)
+    {
+        <label>Password</label>
+        <input type="password" asp-for="Input.Password" required />
+        <span class="muted" asp-validation-for="Input.Password"></span>
+    }
+    else
+    {
+        <p class="muted">Password will be requested after email verification.</p>
+    }
+
+    <label>Department</label>
+    <select asp-for="Input.DepartmentId" asp-items="Model.DepartmentOptions" required>
+        <option value="">Select department</option>
+    </select>
+    <span class="muted" asp-validation-for="Input.DepartmentId"></span>
+
+    <label>Grade</label>
+    <select asp-for="Input.GradeId" asp-items="Model.GradeOptions" required>
+        <option value="">Select grade</option>
+    </select>
+    <span class="muted" asp-validation-for="Input.GradeId"></span>
+
+    <label>Mobile Number</label>
+    <input type="text" asp-for="Input.MobileNumber" required />
+    <span class="muted" asp-validation-for="Input.MobileNumber"></span>
+
+    <label>Aadhar Number</label>
+    <input type="text" asp-for="Input.AadharNumber" required />
+    <span class="muted" asp-validation-for="Input.AadharNumber"></span>
+
+    <label>User Type</label>
+    <select asp-for="Input.UserType" id="userTypeSelect">
+        <option value="">Select user type</option>
+        <option value="1">Employee</option>
+    </select>
+    <span class="muted" asp-validation-for="Input.UserType"></span>
+
+    <div id="agencyField">
+        <label>Contractor Agency Name</label>
+        <input type="text" asp-for="Input.ContractorAgencyName" />
+        <span class="muted" asp-validation-for="Input.ContractorAgencyName"></span>
+    </div>
+
+        <button type="submit">
+            @(Model.RequirePassword ? "Complete Registration" : "Verify Email")
+        </button>
+    </form>
+}
+
+<script>
+    (function () {
+        var select = document.getElementById("userTypeSelect");
+        var agency = document.getElementById("agencyField");
+        if (!select || !agency) return;
+
+        function toggleAgency() {
+            agency.style.display = select.value === "2" ? "block" : "none";
+        }
+
+        select.addEventListener("change", toggleAgency);
+        toggleAgency();
+    })();
+</script>
+

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LMEL SSO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #f7f4f2;
+            --ink: #1b1b1f;
+            --muted: #5b5f67;
+            --accent: #dc2626;
+            --accent-dark: #b91c1c;
+            --surface: #ffffff;
+            --surface-muted: #f3f3f6;
+            --line: #e3e0e6;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --shadow: 0 24px 60px rgba(17, 24, 39, 0.18);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Space Grotesk", "Inter", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(1200px 500px at 10% -10%, rgba(220, 38, 38, 0.12), transparent 60%),
+                radial-gradient(900px 500px at 90% -5%, rgba(0, 0, 0, 0.05), transparent 55%),
+                linear-gradient(180deg, #faf7f5 0%, #f7f4f2 60%, #f3efed 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            position: relative;
+            padding: 28px 24px;
+            background: linear-gradient(120deg, #111111 0%, #1f1f23 50%, #111111 100%);
+            color: #f9fafb;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            inset: -80px -60px auto auto;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.55), transparent 70%);
+            opacity: 0.75;
+        }
+
+        .header-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #f9fafb;
+            font-size: 13px;
+            text-decoration: none;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(140deg, #dc2626 0%, #7f1d1d 100%);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            color: #ffffff;
+            box-shadow: 0 12px 24px rgba(220, 38, 38, 0.35);
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: 0.2px;
+        }
+
+        .brand p {
+            margin: 2px 0 0 0;
+            font-size: 13px;
+            color: rgba(248, 250, 252, 0.65);
+            font-family: "Inter", sans-serif;
+        }
+
+        main {
+            max-width: 980px;
+            margin: 28px auto 48px;
+            padding: 0 20px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 28px;
+            border: 1px solid rgba(17, 24, 39, 0.06);
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin: 0 0 10px 0;
+        }
+
+        p { color: var(--muted); }
+
+        label {
+            display: block;
+            margin-top: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            margin-top: 6px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--surface-muted);
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            color: var(--ink);
+        }
+
+        button {
+            margin-top: 18px;
+            padding: 12px 18px;
+            background: var(--accent);
+            color: #ffffff;
+            border: 0;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 12px 24px rgba(220, 38, 38, 0.28);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(220, 38, 38, 0.36);
+        }
+
+        a { color: var(--accent-dark); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .muted { color: var(--muted); font-size: 13px; }
+        .alert { padding: 12px; background: #ecfdf3; border: 1px solid #bbf7d0; border-radius: 10px; margin-top: 12px; color: #166534; }
+        .error { padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; margin-top: 12px; color: #b91c1c; }
+
+        @@media (max-width: 720px) {
+            header { padding: 22px 18px; }
+            .header-inner { flex-direction: column; align-items: flex-start; }
+            main { margin-top: -26px; }
+            .nav-actions { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="brand">
+                <div class="brand-mark">SSO</div>
+                <div>
+                    <h1>Lloyds Metals & Energy Ltd.</h1>
+                    <p>Secure access for every internal app</p>
+                </div>
+            </div>
+            <nav class="nav-actions">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="javascript:history.back()">Back</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="panel">
+            @RenderBody()
+        </div>
+    </main>
+</body>
+</html>
